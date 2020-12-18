@@ -14,7 +14,9 @@ npm run serve
 ```
 npm run build
 ```
-
+"serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint
 ### Lints and fixes files
 ```
 npm run lint

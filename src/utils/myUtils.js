@@ -1,1 +1,1 @@
-export const baseURL = "https://elm.cangdu.org";
+export const baseUrl = "https://elm.cangdu.org";

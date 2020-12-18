@@ -2,8 +2,15 @@
   <div>
     <Header>
       <span slot="logo" class="header_logo">ele.me</span>
-      <router-link to="/login" slot="signinUp">
+      <router-link to="/login" slot="signinUp" v-if="!user_id">
         <span class="header_login">登录|注册</span>
+      </router-link>
+      <router-link else to="/profile" slot="signinUp">
+        <!-- <span class="header_login">{{ username }}</span> -->
+        <van-icon
+          name="https://b.yzcdn.cn/vant/icon-demo-1126.png"
+          class="header_login"
+        />
       </router-link>
     </Header>
     <nav class="city_nav">
@@ -56,14 +63,28 @@
 <script>
 import Header from "@comps/Header";
 import { cityGuess } from "@api/city";
+import { getUserMsg } from "@api/login";
 export default {
   name: "Home",
   data() {
     return {
       cityGuess: {}, // 当前城市
       hotCity: [], // 热门城市
-      groupCity: {} // 所有城市
+      groupCity: {}, // 所有城市
+      user_id: window.localStorage.getItem("user_id"),
+      username: ""
     };
+  },
+  watch: {
+    user_id: {
+      async handler(val) {
+        if (val) {
+          const res = await getUserMsg(this.user_id);
+          this.username = res.username;
+        }
+      },
+      immediate: true
+    }
   },
   computed: {
     sortGroupCity() {
@@ -111,7 +132,7 @@ export default {
 }
 .header_login {
   right: 0.55rem;
-  font-size: 0.65rem;
+  font-size: 1rem;
   color: #fff;
   position: absolute;
   top: 50%;

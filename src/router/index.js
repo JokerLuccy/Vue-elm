@@ -3,6 +3,8 @@ import VueRouter from "vue-router";
 const Home = () => import("@views/Home");
 const City = () => import("@views/City");
 const Login = () => import("@views/Login");
+const ResetPwd = () => import("@views/Login/resetPwd");
+const Profile = () => import("@views/Profile");
 const push = VueRouter.prototype.push;
 VueRouter.prototype.push = function(location, onComplete, onAbort) {
   if (onComplete && onAbort) {
@@ -31,6 +33,14 @@ const router = new VueRouter({
     {
       path: "/login",
       component: Login
+    },
+    {
+      path: "/forget",
+      component: ResetPwd
+    },
+    {
+      path: "/profile",
+      component: Profile
     }
   ],
   scrollBehavior() {

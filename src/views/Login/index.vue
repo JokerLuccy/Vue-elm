@@ -1,7 +1,13 @@
 <template>
   <div>
-    <van-nav-bar title="密码登录" left-arrow style="margin-bottom:15px" />
+    <van-nav-bar
+      title="密码登录"
+      left-arrow
+      style="margin-bottom:15px"
+      @click-left="$router.push('/')"
+    />
     <van-form>
+      <!-- 账号 -->
       <van-field
         v-model="username"
         name="账号"
@@ -9,7 +15,7 @@
         placeholder="请输入账号"
         :rules="[{ required: true, message: '请填写账号' }]"
       />
-
+      <!-- 密码 -->
       <van-field
         v-model="password"
         :type="checked ? 'password' : 'text'"
@@ -22,7 +28,7 @@
           <van-switch v-model="checked" size="24" />
         </template>
       </van-field>
-
+      <!-- 验证码 -->
       <van-field
         v-model="captcha_code"
         type="code"
@@ -33,18 +39,22 @@
       >
         <div slot="button">
           <img v-show="codeUrl" :src="codeUrl" @click="getCode" />
-          <div>
-            <p>看不清</p>
-            <p>换一张</p>
-          </div>
         </div>
       </van-field>
+      <!-- 文字提示 -->
       <p class="login_tips">
         温馨提示：未注册过的账号，登录时将自动注册
       </p>
       <p class="login_tips">
         注册过的用户可凭账号密码登录
       </p>
+      <!-- 重置密码 -->
+      <div class="resetPwd">
+        <router-link to="/forget">
+          <a>重置密码</a>
+        </router-link>
+      </div>
+      <!-- 登录按钮 -->
       <div style="margin: 16px;">
         <van-button
           round
@@ -77,18 +87,33 @@ export default {
     // 获取验证码
     async getCode() {
       const res = await getCode();
-      this.codeUrl = res.data.code;
+      this.codeUrl = res.code;
     },
     // 提交表单
     async onSubmit() {
       const { username, password, captcha_code } = this;
       const data = { username, password, captcha_code };
       const res = await userLogin(data);
-      this.getCode();
       console.log(res);
+      if (res.status === 0) {
+        this.$dialog
+          .alert({
+            title: "提示",
+            message: "账号或密码错误"
+          })
+          .then(() => {
+            this.getCode();
+          });
+      } else {
+        (this.username = ""),
+          (this.password = ""),
+          (this.captcha_code = ""),
+          window.localStorage.setItem("user_id", res.user_id);
+        this.$router.push("/");
+      }
     }
   },
-  created() {},
+
   mounted() {
     this.getCode();
   }
@@ -99,6 +124,11 @@ export default {
 .login_tips {
   font-size: 0.5rem;
   color: red;
+  padding: 0.4rem 0.6rem;
+  line-height: 0.5rem;
+}
+.resetPwd {
+  font-size: 0.5rem;
   padding: 0.4rem 0.6rem;
   line-height: 0.5rem;
 }
